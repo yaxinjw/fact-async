@@ -40,7 +40,9 @@ public class AsyncMethodProxy implements AsyncProxy {
         if (!ReflectionHelper.canProxy(targetClass)) {
             return target;
         }
-        Class<?> proxyClass = AsyncProxyCache.getProxyClass(CommonUtil.buildkey(targetClass.getName(), all));
+
+        String proxyClassKey = CommonUtil.buildkey(targetClass.getName(), all);
+        Class<?> proxyClass = AsyncProxyCache.getProxyClass(proxyClassKey);
         if (proxyClass == null) {
             Enhancer enhancer = new Enhancer();
             if (targetClass.isInterface()) {
@@ -52,9 +54,12 @@ public class AsyncMethodProxy implements AsyncProxy {
             enhancer.setCallbackType(AsyncMethodInterceptor.class);
             proxyClass = enhancer.createClass();
             logger.debug("create proxy class:{}", targetClass);
-            AsyncProxyCache.registerProxy(CommonUtil.buildkey(targetClass.getName(), all), proxyClass);
+
+            AsyncProxyCache.registerProxy(proxyClassKey, proxyClass);
             AsyncProxyCache.registerMethod(target, timeout, all);
         }
+
+        // 这里注册回调很重要，关联到了线程池
         Enhancer.registerCallbacks(proxyClass, new Callback[]{new AsyncMethodInterceptor(target)});
         Object proxyObject = null;
         try {

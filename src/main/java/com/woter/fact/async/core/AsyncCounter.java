@@ -7,7 +7,7 @@ package com.woter.fact.async.core;
  */
 public class AsyncCounter {
 
-    private static ThreadLocal<Integer> counterThreadMap = new ThreadLocal<Integer>();
+    private static ThreadLocal<Integer> counterThreadMap = new ThreadLocal<>();
 
     public static int intValue() {
         Integer counter = counterThreadMap.get();

@@ -104,6 +104,8 @@ public final class AsyncExecutor {
             initializeThreadPool(threadPoolConfiguration);
         }
         AsyncMethod method = buildAsyncMethod(callable);
+
+        // 这里的transaction还有待研究
         if (callable instanceof com.woter.fact.async.core.TransactionCallable) {
             callable = executeTransaction(callable);
         }
@@ -130,8 +132,9 @@ public final class AsyncExecutor {
     }
 
     private static <T> AsyncMethod buildAsyncMethod(com.woter.fact.async.core.AsyncFutureCallable<T> callable) {
-        if (callable.cacheKey() != null) {
-            AsyncMethod method = AsyncProxyCache.getAsyncMethod(callable.cacheKey());
+        String cacheKey = callable.cacheKey();
+        if (cacheKey != null) {
+            AsyncMethod method = AsyncProxyCache.getAsyncMethod(cacheKey);
             if (method != null) {
                 return method;
             }

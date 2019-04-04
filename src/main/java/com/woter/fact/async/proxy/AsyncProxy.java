@@ -15,6 +15,13 @@ public interface AsyncProxy {
 
     public Object buildProxy(Object target, boolean all);
 
+    /**
+     *
+     * @param target
+     * @param timeout
+     * @param all 是否所有的方法都异步
+     * @return
+     */
     public Object buildProxy(Object target, long timeout, boolean all);
 
 }

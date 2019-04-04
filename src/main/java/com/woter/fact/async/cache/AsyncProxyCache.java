@@ -71,25 +71,27 @@ public final class AsyncProxyCache {
             return;
         }
 
+        String beanNameKey = CommonUtil.getClass(bean).getName();
         if (!all) {
-            nativeObjects.putIfAbsent(CommonUtil.getClass(bean).getName(), bean);
+            nativeObjects.putIfAbsent(beanNameKey, bean);
         } else {
-            Object nativeObject = nativeObjects.get(CommonUtil.getClass(bean).getName());
+            Object nativeObject = nativeObjects.get(beanNameKey);
             if (nativeObject != null) bean = nativeObject;
         }
 
         for (Method method : methods) {
+            String methodKey = CommonUtil.buildkey(bean, method);
             if (!all) {
                 Async annotation = ReflectionHelper.findAsyncAnnatation(bean, method);
                 if (annotation != null) {
                     AsyncMethod asyncMethod = new AsyncMethod(bean, method, annotation.timeout(), new AsyncRetry(annotation.maxAttemps(), annotation.exceptions()));
-                    putAsyncMethod(CommonUtil.buildkey(bean, method), asyncMethod);
+                    putAsyncMethod(methodKey, asyncMethod);
                 }
             } else {
                 Class<?> returnClass = method.getReturnType();
                 if (Void.TYPE.isAssignableFrom(returnClass) || ReflectionHelper.canProxy(returnClass)) {
                     AsyncMethod asyncMethod = new AsyncMethod(bean, method, timeout, new AsyncRetry(0, Throwable.class));
-                    putAsyncMethod(CommonUtil.buildkey(bean, method), asyncMethod);
+                    putAsyncMethod(methodKey, asyncMethod);
                 }
             }
         }

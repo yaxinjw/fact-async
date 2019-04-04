@@ -56,6 +56,7 @@ public class AsyncFutureTask<V> extends FutureTask<V> {
 
     @Override
     protected void done() {
+        System.out.println("callable完成了就调用done方法");
         endTime = System.currentTimeMillis();
         if (counter >= 0) {
             AsyncCounter.release();
@@ -94,6 +95,7 @@ public class AsyncFutureTask<V> extends FutureTask<V> {
     @Override
     public void run() {
         startTime = System.currentTimeMillis();
+        // 这里就是com.woter.fact.async.pool.AsyncTaskThreadPool.execute执行后加1的原因
         if (counter >= 0) {
             AsyncCounter.set(++counter);
         }

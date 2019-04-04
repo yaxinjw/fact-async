@@ -18,8 +18,14 @@ import java.util.regex.Pattern;
  */
 public final class CommonUtil {
 
+    /**
+     * 如果为cglib代理就返回superclass，否则返回本身getClass
+     * @param object
+     * @return
+     */
     public static Class<?> getClass(Object object) {
         boolean isCglibProxy = false;
+        // 这里的2个判断是有重复的，感觉是可以优化的
         if (AopUtils.isCglibProxy(object)) {
             isCglibProxy = true;
         }
